@@ -18,7 +18,7 @@ export default async function MyCoursesPage() {
   const allCourses: Course[] = await res.json();
 
   const courses = allCourses.filter(
-    (c) => c.instructorId === Number(session?.user?.id) // ✅ FIX
+    (c) => c.instructorId === Number(session?.user?.id)
   );
 
   return (
@@ -50,7 +50,6 @@ export default async function MyCoursesPage() {
             </tr>
           ))}
         </tbody>
-
       </table>
     </div>
   );

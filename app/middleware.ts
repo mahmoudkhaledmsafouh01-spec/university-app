@@ -1,15 +1,11 @@
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth({
-  callbacks: {
-    authorized({ token }) {
-      // Utente loggato?
-      return !!token;
-    },
+  pages: {
+    signIn: "/login",
   },
 });
 
-// Pagine protette
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/admin/:path*"],
 };

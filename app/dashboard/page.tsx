@@ -1,8 +1,16 @@
-export default function DashboardPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="mt-4">Welcome to your dashboard.</p>
-    </div>
-  );
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/getCurrentUser";
+
+export default async function Dashboard() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (user.role === "STUDENT") redirect("/dashboard/student");
+  if (user.role === "ADMIN") redirect("/dashboard/admin");
+  if (user.role === "INSTRUCTOR") redirect("/dashboard/instructor");
+
+  return <h1>No role found</h1>;
 }

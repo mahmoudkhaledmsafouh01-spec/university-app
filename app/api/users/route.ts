@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { normalizeRole } from "@/lib/roles";
 
 export async function GET() {
   const users = await prisma.user.findMany();
@@ -13,7 +14,7 @@ export async function POST(req: Request) {
     data: {
       name,
       email,
-      role,
+      role: normalizeRole(role),
       password: password ? password : "",
     },
   });

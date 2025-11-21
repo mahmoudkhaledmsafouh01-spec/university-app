@@ -2,6 +2,7 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import { compare } from "bcryptjs";
+import { normalizeRole } from "@/lib/roles";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -28,11 +29,13 @@ export const authOptions: NextAuthOptions = {
         const valid = await compare(credentials.password, user.password);
         if (!valid) return null;
 
+        const role = normalizeRole(user.role);
+
         return {
           id: String(user.id),
           name: user.name,
           email: user.email,
-          role: user.role,
+          role,
         };
       },
     }),
@@ -42,7 +45,9 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+         token.role = normalizeRole(user.role);
+      } else {
+        token.role = normalizeRole(token.role as string | undefined);
       }
       return token;
     },
@@ -50,7 +55,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = normalizeRole(token.role as string | undefined);
       }
       return session;
     },

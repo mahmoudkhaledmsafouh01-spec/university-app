@@ -2,6 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { normalizeRole } from "./roles";
 
 const prisma = new PrismaClient();
 
@@ -28,21 +29,21 @@ export const authOptions: AuthOptions = {
           return null;
         }
 
-        const valid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        const valid = await bcrypt.compare(credentials.password, user.password);
 
         if (!valid) {
           console.log("Invalid password");
           return null;
         }
 
+        const role = normalizeRole(user.role?.toString());
+
+
         return {
           id: String(user.id),
           name: user.name,
           email: user.email,
-          role: user.role,
+          role,
         };
       },
     }),
@@ -54,17 +55,18 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = normalizeRole(user.role?.toString());
+
       }
       return token;
     },
 
     async session({ session, token }) {
-      session.user = {
-        ...(session.user || {}),
-        id: token.id as string,
-        role: token.role as string,
-      };
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = normalizeRole(token.role?.toString());
+
+      }
       return session;
     },
   },
