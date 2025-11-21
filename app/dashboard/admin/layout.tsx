@@ -15,7 +15,6 @@ import {
   Moon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 
 // Sidebar links
 const navItems = [
@@ -63,13 +62,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       )}
 
       {/* ---------- SIDEBAR ---------- */}
-      <motion.aside
-        initial={{ x: -250 }}
-        animate={{ x: mobileOpen ? 0 : 0 }}
-        transition={{ type: "spring", stiffness: 70 }}
-        className={`fixed z-40 lg:static top-0 left-0 h-full w-64 
-        bg-slate-900 dark:bg-slate-800 text-white p-6 flex flex-col gap-8 
-        transform ${mobileOpen ? "translate-x-0" : "-translate-x-64"} 
+      <aside
+        className={`fixed z-40 lg:static top-0 left-0 h-full w-64
+        bg-slate-900 dark:bg-slate-800 text-white p-6 flex flex-col gap-8
+        transform ${mobileOpen ? "translate-x-0" : "-translate-x-64"}
         lg:translate-x-0 transition-transform`}
       >
         {/* Logo */}
@@ -106,7 +102,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             Logout
           </button>
         </div>
-      </motion.aside>
+        </aside>
 
       {/* ---------- MAIN CONTENT AREA ---------- */}
       <div className="flex-1 flex flex-col">
@@ -162,14 +158,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </header>
 
         {/* ---------- PAGE CONTENT (with animation) ---------- */}
-        <motion.main
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="p-8"
-        >
+                <main className="p-8">
+
           {children}
-        </motion.main>
+        </main>
       </div>
     </div>
   );

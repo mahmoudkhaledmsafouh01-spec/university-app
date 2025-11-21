@@ -8,8 +8,4 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-};module.exports = {
-  plugins: {
-    "@tailwindcss/postcss": {},
-  },
 };

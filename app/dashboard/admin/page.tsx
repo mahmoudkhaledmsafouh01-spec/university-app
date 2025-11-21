@@ -75,8 +75,7 @@ const quickLinks = [
   },
   {
     label: "Create course",
-    href: "/dashboard/admin/courses'/new",
-    description: "Set up curriculum details quickly",
+    href: "/dashboard/admin/courses/new",    description: "Set up curriculum details quickly",
   },
   {
     label: "Department directory",

@@ -37,8 +37,6 @@ export const authOptions: AuthOptions = {
         }
 
         const role = normalizeRole(user.role?.toString());
-
-
         return {
           id: String(user.id),
           name: user.name,
@@ -56,7 +54,6 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = normalizeRole(user.role?.toString());
-
       }
       return token;
     },
@@ -65,7 +62,6 @@ export const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = normalizeRole(token.role?.toString());
-
       }
       return session;
     },
