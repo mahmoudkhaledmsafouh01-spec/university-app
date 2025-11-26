@@ -1,56 +1,61 @@
-// app/dashboard/admin/users/page.tsx
-import DeleteButton from "@/components/DeleteButton";
+const mockUsers = [
+  { name: "Olivia Rhye", role: "Instructor", email: "olivia@university.edu" },
+  { name: "Milo Carter", role: "Student", email: "milo@university.edu" },
+  { name: "Beatriz Lee", role: "Admin", email: "beatriz@university.edu" },
+];
 
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: "ADMIN" | "INSTRUCTOR" | "STUDENT";
-};
-
-export default async function UsersPage() {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/users`, {
-    cache: "no-store",
-  });
-  const users: User[] = await res.json();
-
+export default function AdminUsersPage() {
   return (
-    <div>
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Users</h1>
-        <a href="/dashboard/admin/users/new" className="btn-primary">
-          + New
+    <div className="space-y-6">
+
+      {/* Header */}
+      <header>
+        <h1 className="text-2xl font-bold text-slate-900">User directory</h1>
+        <p className="text-sm text-slate-600">
+          Manage access and invite new teammates to the university platform.
+        </p>
+      </header>
+
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3">
+        <a
+          href="/dashboard/admin/users/new"
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500"
+        >
+          Add a user
+        </a>
+
+        <a
+          href="/dashboard/admin"
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-indigo-200 hover:text-indigo-700"
+        >
+          Back to overview
         </a>
       </div>
 
-      <table className="w-full bg-white shadow rounded">
-        <thead>
-          <tr className="border-b">
-            <th className="p-2 text-left">Name</th>
-            <th className="p-2 text-left">Email</th>
-            <th className="p-2 text-left">Role</th>
-            <th className="p-2 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id} className="border-b">
-              <td className="p-2">{u.name}</td>
-              <td className="p-2">{u.email}</td>
-              <td className="p-2">{u.role}</td>
-              <td className="p-2 flex gap-2">
-                <a
-                  href={`/dashboard/admin/users/${u.id}/edit`}
-                  className="px-3 py-1 bg-yellow-500 text-white rounded"
-                >
-                  Edit
-                </a>
-                <DeleteButton apiUrl="/api/users" id={u.id} />
-              </td>
+      {/* Table */}
+      <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+        <table className="min-w-full divide-y divide-slate-100">
+          <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <tr>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Role</th>
+              <th className="px-4 py-3">Email</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+            {mockUsers.map((user) => (
+              <tr key={user.email} className="hover:bg-slate-50">
+                <td className="px-4 py-3 font-semibold">{user.name}</td>
+                <td className="px-4 py-3">{user.role}</td>
+                <td className="px-4 py-3 text-slate-500">{user.email}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }

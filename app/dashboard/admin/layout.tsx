@@ -14,6 +14,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
 // Sidebar links
@@ -97,8 +98,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="mt-auto">
-          <button className="flex gap-3 items-center px-3 py-2 text-sm text-slate-300 hover:bg-red-600/20 rounded-lg transition">
-            <LogOut className="h-5 w-5" />
+        <button
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex gap-3 items-center px-3 py-2 text-sm text-slate-300 hover:bg-red-600/20 rounded-lg transition"
+          >            <LogOut className="h-5 w-5" />
             Logout
           </button>
         </div>

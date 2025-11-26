@@ -1,32 +1,85 @@
-import prisma from "@/lib/prisma";
+"use client";
 
-export default async function NewAnnouncementPage() {
-  // Load courses
-  const courses = await prisma.course.findMany({
-    select: {
-      id: true,
-      title: true,
-    },
-  });
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-  // Load users
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-    },
-  });
+type SelectOption = {
+  id: number;
+  title?: string;
+  name?: string;
+};
+
+export default function NewAnnouncementPage() {
+  const router = useRouter();
+  const [courses, setCourses] = useState<SelectOption[]>([]);
+  const [users, setUsers] = useState<SelectOption[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadOptions() {
+      try {
+        const [coursesRes, usersRes] = await Promise.all([
+          fetch("/api/courses"),
+          fetch("/api/users"),
+        ]);
+
+        if (!coursesRes.ok || !usersRes.ok) {
+          throw new Error("Failed to load form options");
+        }
+
+        const [coursesData, usersData] = await Promise.all([
+          coursesRes.json(),
+          usersRes.json(),
+        ]);
+
+        setCourses(coursesData);
+        setUsers(usersData);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load courses or users.");
+      }
+    }
+
+    loadOptions();
+  }, []);
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
+    const form = e.currentTarget;
+
+    const data = {
+      title: (form.elements.namedItem("title") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+      courseId: Number((form.elements.namedItem("courseId") as HTMLSelectElement).value),
+      authorId: Number((form.elements.namedItem("authorId") as HTMLSelectElement).value),
+    };
+
+    const res = await fetch("/api/announcements", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body.error ?? "Unable to create announcement.");
+      setSubmitting(false);
+      return;
+    }
+
+    router.push("/dashboard/admin/announcements");
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Create Announcement</h1>
-
+    <div>
       <form
-        action="/api/announcements"
-        method="POST"
+        onSubmit={submit}
         className="space-y-4 border p-4 rounded bg-white shadow"
       >
-        {/* TITLE */}
         <div>
           <label className="font-medium">Title</label>
           <input
@@ -37,18 +90,16 @@ export default async function NewAnnouncementPage() {
           />
         </div>
 
-        {/* CONTENT */}
         <div>
-          <label className="font-medium">Content</label>
+          <label className="font-medium">Message</label>
           <textarea
-            name="content"
+            name="message"
             className="border w-full p-2 rounded"
             rows={4}
             required
           ></textarea>
         </div>
 
-        {/* COURSE */}
         <div>
           <label className="font-medium">Course</label>
           <select name="courseId" className="border w-full p-2 rounded" required>
@@ -60,7 +111,6 @@ export default async function NewAnnouncementPage() {
           </select>
         </div>
 
-        {/* AUTHOR */}
         <div>
           <label className="font-medium">Author</label>
           <select name="authorId" className="border w-full p-2 rounded" required>
@@ -72,11 +122,14 @@ export default async function NewAnnouncementPage() {
           </select>
         </div>
 
+        {error && <p className="text-red-600 text-sm">{error}</p>}
+
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          disabled={submitting}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-60"
         >
-          Create
+          {submitting ? "Creating..." : "Create"}
         </button>
       </form>
     </div>

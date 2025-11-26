@@ -1,77 +1,56 @@
-interface CoursePageParams {
-  id: string;
+interface PageProps {
+  params: { id: string };
 }
 
-interface Lesson {
-  id: string;
-  title: string;
-}
+const panels = [
+  { title: "Roster", detail: "See enrolled students and attendance." },
+  { title: "Assignments", detail: "Draft, publish, and grade coursework." },
+  { title: "Announcements", detail: "Share quick updates with the class." },
+];
 
-interface Course {
-  id: string;
-  title: string;
-  lessons: Lesson[];
-}
-
-export default async function InstructorCourseDetails({
-  params,
-}: {
-  params: CoursePageParams;
-}) {
-  const res = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/courses/${params.id}`,
-    { cache: "no-store" }
-  );
-
-  if (!res.ok) {
-    return <div className="p-6">Error: Course not found.</div>;
-  }
-
-  const course: Course = await res.json();
-
+export default function InstructorCourseDetail({ params }: PageProps) {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
+    <div className="space-y-6">
 
-      <div className="grid grid-cols-2 gap-6">
+      {/* Header */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+            Course
+          </p>
 
-        {/* Add Lesson */}
+          <h1 className="text-2xl font-bold text-slate-900">
+            Course #{params.id}
+          </h1>
+
+          <p className="text-sm text-slate-600">
+            Centralize everything for this class.
+          </p>
+        </div>
+
         <a
-          href={`/dashboard/instructor/my-courses/${params.id}/lessons/new`}
-          className="p-6 bg-white rounded shadow"
+          href="/dashboard/instructor/my-courses"
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-indigo-200 hover:text-indigo-700"
         >
-          + Add Lesson
+          Back to courses
         </a>
-
-        {/* Manage Grades */}
-        <a
-          href={`/dashboard/instructor/my-courses/${params.id}/grades`}
-          className="p-6 bg-white rounded shadow"
-        >
-          Manage Grades
-        </a>
-
       </div>
 
-      <h2 className="mt-8 text-xl font-bold">Lessons</h2>
-
-      <ul className="bg-white mt-2 p-4 rounded shadow">
-        {course.lessons.map((l: Lesson) => (
-          <li
-            key={l.id}
-            className="flex justify-between border-b py-2"
+      {/* Panels */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {panels.map((panel) => (
+          <div
+            key={panel.title}
+            className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm"
           >
-            {l.title}
-
-            <a
-              href={`/dashboard/instructor/my-courses/${params.id}/lessons/${l.id}/edit`}
-              className="text-blue-600"
-            >
-              Edit
-            </a>
-          </li>
+            <p className="text-sm font-semibold text-slate-900">
+              {panel.title}
+            </p>
+            <p className="text-xs text-slate-600">{panel.detail}</p>
+          </div>
         ))}
-      </ul>
+      </div>
+
     </div>
   );
 }

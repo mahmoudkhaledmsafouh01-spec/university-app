@@ -1,6 +1,12 @@
-import "./globals.css";  
-export const metadata = {
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
   title: "University App",
+  description: "Modern university admin portal",
 };
 
 export default function RootLayout({
@@ -10,7 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${inter.className} bg-slate-50 text-slate-900`}>
+        {children}
+      </body>
     </html>
   );
 }
