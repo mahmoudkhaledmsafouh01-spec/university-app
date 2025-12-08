@@ -107,13 +107,13 @@ const workload = [
 
 const quickLinks = [
   {
-    label: "Add a new user",
+    label: "Create user",
     href: "/dashboard/admin/users/new",
     description: "Invite staff, instructors, or students",
     icon: UserPlus,
   },
   {
-    label: "Publish announcement",
+    label: "Create announcement",
     href: "/dashboard/admin/announcements/new",
     description: "Share campus-wide updates quickly",
     icon: Megaphone,
