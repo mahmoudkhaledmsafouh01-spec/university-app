@@ -2,9 +2,14 @@ import {
   BellRing,
   BookOpen,
   Building2,
+  Building,
+  GraduationCap,
   Megaphone,
+  Plus,
+  School,
   ShieldCheck,
   Sparkles,
+  UserPlus,
   Users,
 } from "lucide-react";
 
@@ -32,6 +37,44 @@ const quickStats = [
     value: "6",
     delta: "2 scheduled",
     icon: Megaphone,
+  },
+];
+
+const managementAreas = [
+  {
+    label: "Users",
+    description: "Invite admins, instructors, and support staff.",
+    icon: UserPlus,
+    href: "/dashboard/admin/users",
+    createHref: "/dashboard/admin/users/new",
+  },
+  {
+    label: "Students",
+    description: "Track enrollment, cohorts, and onboarding.",
+    icon: School,
+    href: "/dashboard/admin/students",
+    createHref: "/dashboard/admin/students/new",
+  },
+  {
+    label: "Departments",
+    description: "Keep chair contacts and faculty rosters updated.",
+    icon: Building,
+    href: "/dashboard/admin/departments",
+    createHref: "/dashboard/admin/departments/new",
+  },
+  {
+    label: "Courses",
+    description: "Set up curriculum details and modules.",
+    icon: BookOpen,
+    href: "/dashboard/admin/courses",
+    createHref: "/dashboard/admin/courses/new",
+  },
+  {
+    label: "Announcements",
+    description: "Publish campus-wide updates and notices.",
+    icon: Megaphone,
+    href: "/dashboard/admin/announcements",
+    createHref: "/dashboard/admin/announcements/new",
   },
 ];
 
@@ -67,20 +110,29 @@ const quickLinks = [
     label: "Add a new user",
     href: "/dashboard/admin/users/new",
     description: "Invite staff, instructors, or students",
+    icon: UserPlus,
   },
   {
     label: "Publish announcement",
-    href: "/dashboard/admin/announcements/new",
-    description: "Share campus-wide updates",
+       href: "/dashboard/admin/courses/new",
+    description: "Set up curriculum details quickly",
+    icon: BookOpen,
   },
   {
     label: "Create course",
     href: "/dashboard/admin/courses/new",    description: "Set up curriculum details quickly",
   },
   {
-    label: "Department directory",
-    href: "/dashboard/admin/departments",
+    label: "New department",
+    href: "/dashboard/admin/departments/new",
     description: "Manage chairs and contact info",
+    icon: Building2,
+  },
+  {
+    label: "Add student profile",
+    href: "/dashboard/admin/students/new",
+    description: "Capture enrollment details and advisors",
+    icon: GraduationCap,
   },
 ];
 
@@ -161,6 +213,49 @@ export default function AdminOverview() {
 
       <section className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+                  <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Manage everything</h2>
+                <p className="text-sm text-slate-600">
+                  Jump straight into users, students, departments, courses, and announcements.
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                <Plus className="h-4 w-4" /> New records ready
+              </span>
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {managementAreas.map((area) => (
+                <div
+                  key={area.label}
+                  className="flex flex-col gap-3 rounded-xl border border-slate-100 p-4 shadow-[0_6px_24px_-12px_rgba(15,23,42,0.12)] hover:border-indigo-100"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100">
+                      <area.icon className="h-5 w-5" />
+                    </div>
+                    <a
+                      href={area.createHref}
+                      className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1 text-xs font-semibold text-white shadow hover:bg-indigo-500"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> New
+                    </a>
+                  </div>
+                  <div className="space-y-1">
+                    <a
+                      href={area.href}
+                      className="text-sm font-semibold text-slate-900 hover:text-indigo-700"
+                    >
+                      {area.label}
+                    </a>
+                    <p className="text-xs text-slate-600">{area.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -240,11 +335,18 @@ export default function AdminOverview() {
                   href={link.href}
                   className="group flex items-start justify-between rounded-xl border border-slate-100 px-4 py-3 transition hover:-translate-y-[1px] hover:border-indigo-200 hover:shadow-sm"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700">
-                      {link.label}
-                    </p>
-                    <p className="text-xs text-slate-600">{link.description}</p>
+                 <div className="flex items-start gap-3">
+                    {link.icon && (
+                      <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100">
+                        <link.icon className="h-4 w-4" />
+                      </span>
+                    )}
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700">
+                        {link.label}
+                      </p>
+                      <p className="text-xs text-slate-600">{link.description}</p>
+                    </div>
                   </div>
                   <span className="text-sm text-indigo-500 group-hover:text-indigo-600">→</span>
                 </a>
