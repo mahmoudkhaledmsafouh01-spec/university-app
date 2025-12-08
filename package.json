@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "studio": "prisma studio",
     "seed": "ts-node prisma/seed.ts"
   },
   "prisma": {

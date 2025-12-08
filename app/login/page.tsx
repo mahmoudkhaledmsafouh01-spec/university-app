@@ -7,6 +7,7 @@ import { FormEvent } from "react";
 export default function LoginPage() {
   const params = useSearchParams();
   const error = params.get("error");
+  const registered = params.get("registered");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,6 +28,12 @@ export default function LoginPage() {
     <div>
       <h1>Login</h1>
 
+      {registered && (
+        <p style={{ color: "green" }}>
+          Account created successfully. You can sign in now.
+        </p>
+      )}
+
       {error && <p style={{ color: "red" }}>Invalid credentials</p>}
 
       <form onSubmit={handleSubmit}>
@@ -34,6 +41,10 @@ export default function LoginPage() {
         <input name="password" type="password" placeholder="Password" required />
         <button type="submit">Login</button>
       </form>
+
+        <p style={{ marginTop: "1rem" }}>
+        Need an account? <a href="/register">Sign up</a>.
+      </p>
     </div>
   );
 }
