@@ -114,14 +114,15 @@ const quickLinks = [
   },
   {
     label: "Publish announcement",
-       href: "/dashboard/admin/courses/new",
-    description: "Set up curriculum details quickly",
-    icon: BookOpen,
+    href: "/dashboard/admin/announcements/new",
+    description: "Share campus-wide updates quickly",
+    icon: Megaphone,
   },
   {
     label: "Create course",
-    href: "/dashboard/admin/courses/new",    description: "Set up curriculum details quickly",
-  },
+    href: "/dashboard/admin/courses/new",
+    description: "Set up curriculum details quickly",
+    icon: BookOpen,  },
   {
     label: "New department",
     href: "/dashboard/admin/departments/new",

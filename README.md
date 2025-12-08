@@ -13,7 +13,7 @@ A Next.js and Prisma-powered university management portal for courses, lessons, 
    npx prisma db push
    npm run seed
    ```
- The seed script creates ready-to-use demo accounts:
+The seed script creates ready-to-use demo accounts:
    - Admin: `admin@example.com` / `admin123`
    - Instructor: `instructor@example.com` / `teach123`
    - Student: `student@example.com` / `student123`
