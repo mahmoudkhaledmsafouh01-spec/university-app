@@ -1,13 +1,33 @@
-const mockUsers = [
-  { name: "Olivia Rhye", role: "Instructor", email: "olivia@university.edu" },
-  { name: "Milo Carter", role: "Student", email: "milo@university.edu" },
-  { name: "Beatriz Lee", role: "Admin", email: "beatriz@university.edu" },
-];
+async function getUsers() {
+  const res = await fetch("http://localhost:3000/api/users", {
+    cache: "no-store",
+  });
 
-export default function AdminUsersPage() {
+  if (!res.ok) {
+    throw new Error("Failed to load users");
+  }
+
+  return res.json();
+}
+
+type User = {
+  id: number;
+  name: string;
+  role: string;
+  email: string;
+};
+
+const roleLabels: Record<string, string> = {
+  ADMIN: "Admin",
+  INSTRUCTOR: "Instructor",
+  STUDENT: "Student",
+};
+
+export default async function AdminUsersPage() {
+  const users: User[] = await getUsers();
+
   return (
     <div className="space-y-6">
-
       {/* Header */}
       <header>
         <h1 className="text-2xl font-bold text-slate-900">User directory</h1>
@@ -45,17 +65,29 @@ export default function AdminUsersPage() {
           </thead>
 
           <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-            {mockUsers.map((user) => (
-              <tr key={user.email} className="hover:bg-slate-50">
-                <td className="px-4 py-3 font-semibold">{user.name}</td>
-                <td className="px-4 py-3">{user.role}</td>
-                <td className="px-4 py-3 text-slate-500">{user.email}</td>
+            {users.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-4 py-6 text-center text-sm text-slate-500"
+                >
+                  No users yet. Add your first account to get started.
+                </td>
               </tr>
-            ))}
+            ) : (
+              users.map((user) => (
+                <tr key={user.id} className="hover:bg-slate-50">
+                  <td className="px-4 py-3 font-semibold">{user.name}</td>
+                  <td className="px-4 py-3">
+                    {roleLabels[user.role] ?? user.role}
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">{user.email}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

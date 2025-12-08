@@ -1,10 +1,17 @@
-const catalog = [
-  { code: "BIO 201", title: "Genetics", status: "Open" },
-  { code: "CS 150", title: "Intro to Programming", status: "Waitlist" },
-  { code: "ENG 320", title: "Rhetoric & Composition", status: "Open" },
-];
+async function getCourses() {
+  const res = await fetch("http://localhost:3000/api/courses", {
+    cache: "no-store",
+  });
 
-export default function AdminCoursesPage() {
+  if (!res.ok) {
+    throw new Error("Failed to load courses");
+  }
+
+  return res.json();
+}
+
+export default async function AdminCoursesPage() {
+  const courses = await getCourses();
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -22,22 +29,33 @@ export default function AdminCoursesPage() {
         </a>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {catalog.map((course) => (
-          <div
-            key={course.code}
-            className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-indigo-100"
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-slate-900">{course.title}</p>
-              <span className="rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-700">
-                {course.code}
-              </span>
+     {courses.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
+          No courses yet. Create your first course to populate the catalog.
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-3">
+          {courses.map((course: any) => (
+            <div
+              key={course.id}
+              className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-indigo-100"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-900">{course.title}</p>
+                <span className="rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-700">
+                  {course.code}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-slate-600">
+                Credits: {course.credits}
+              </p>
+              {course.description && (
+                <p className="mt-2 text-xs text-slate-500 line-clamp-3">{course.description}</p>
+              )}
             </div>
-            <p className="mt-2 text-xs text-slate-600">Status: {course.status}</p>
-          </div>
-        ))}
-      </div>
+           ))}
+        </div>
+      )}
     </div>
   );
 }
