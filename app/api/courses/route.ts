@@ -11,12 +11,19 @@ export async function GET() {
 export async function POST(req: Request) {
   const { title, code, credits, description } = await req.json();
 
+   if (!title || !code || credits === undefined) {
+    return NextResponse.json(
+      { error: "Title, code, and credits are required" },
+      { status: 400 }
+    );
+  }
+
   const course = await prisma.course.create({
     data: {
       title,
       code,
       credits: Number(credits),
-            description
+            description,
           },
   });
 

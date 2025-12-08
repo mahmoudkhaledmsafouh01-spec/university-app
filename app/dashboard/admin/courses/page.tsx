@@ -1,6 +1,6 @@
 async function getCourses() {
-  const res = await fetch("http://localhost:3000/api/courses", {
-    cache: "no-store",
+ const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const res = await fetch(`${baseUrl}/api/courses`, {    cache: "no-store",
   });
 
   if (!res.ok) {
@@ -29,7 +29,7 @@ export default async function AdminCoursesPage() {
         </a>
       </div>
 
-     {courses.length === 0 ? (
+       {courses.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
           No courses yet. Create your first course to populate the catalog.
         </div>
@@ -46,14 +46,12 @@ export default async function AdminCoursesPage() {
                   {course.code}
                 </span>
               </div>
-              <p className="mt-2 text-xs text-slate-600">
-                Credits: {course.credits}
-              </p>
+              <p className="mt-2 text-xs text-slate-600">Credits: {course.credits}</p>
               {course.description && (
                 <p className="mt-2 text-xs text-slate-500 line-clamp-3">{course.description}</p>
               )}
             </div>
-           ))}
+          ))}
         </div>
       )}
     </div>
