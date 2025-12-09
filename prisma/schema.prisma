@@ -7,6 +7,82 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                Int            @id @default(autoincrement())
+  name              String
+  email             String         @unique
+  role              Role           @default(STUDENT)
+  password          String
+  announcements     Announcement[]
+  instructorCourses Course[]       @relation("InstructorCourses")
+  courses           Enrollment[]
+  grades            Grade[]
+}
+
+model Course {
+  id            Int            @id @default(autoincrement())
+  title         String
+  code          String         @unique
+  credits       Int
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  departmentId  Int?
+  description   String?
+  instructorId  Int?
+  announcements Announcement[]
+  department    Department?    @relation(fields: [departmentId], references: [id])
+  instructor    User?          @relation("InstructorCourses", fields: [instructorId], references: [id])
+  enrollments   Enrollment[]
+  grades        Grade[]
+  lessons       Lesson[]
+}
+
+model Lesson {
+  id       Int      @id @default(autoincrement())
+  title    String
+  content  String?
+  date     DateTime @default(now())
+  courseId Int
+  course   Course   @relation(fields: [courseId], references: [id])
+}
+
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  courseId  Int
+  createdAt DateTime @default(now())
+  studentId Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  student   User     @relation(fields: [studentId], references: [id])
+}
+
+model Grade {
+  id        Int       @id @default(autoincrement())
+  grade     Float
+  type      GradeType
+  createdAt DateTime  @default(now())
+  userId    Int
+  courseId  Int
+  course    Course    @relation(fields: [courseId], references: [id])
+  student   User      @relation(fields: [userId], references: [id])
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  createdAt DateTime @default(now())
+  courseId  Int
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+}
+
+model Department {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  courses Course[]
+}
+
 enum Role {
   ADMIN
   INSTRUCTOR
@@ -17,89 +93,4 @@ enum GradeType {
   EXAM
   ASSIGNMENT
   PROJECT
-}
-
-model User {
-  id           Int       @id @default(autoincrement())
-  name         String
-  email        String    @unique
-  password String
-  role         Role      @default(STUDENT)
-
-  courses      Enrollment[]
-  grades       Grade[]
-  announcements Announcement[]
-  instructorCourses Course[] @relation("InstructorCourses")
-}
-
-model Course {
-  id            Int       @id @default(autoincrement())
-  title         String
-  code          String    @unique
-  credits       Int
-  description   String?
-  departmentId  Int?
-  instructorId  Int?
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  lessons       Lesson[]
-  enrollments   Enrollment[]
-  grades        Grade[]
-  announcements Announcement[]
-
-  department    Department? @relation(fields: [departmentId], references: [id])
-  instructor    User?       @relation("InstructorCourses", fields: [instructorId], references: [id])
-}
-
-model Lesson {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  date      DateTime @default(now())
-  courseId  Int
-
-  course    Course   @relation(fields: [courseId], references: [id])
-}
-
-model Enrollment {
-  id        Int      @id @default(autoincrement())
-  studentId Int
-  courseId  Int
-
-  createdAt DateTime @default(now())
-
-  student   User     @relation(fields: [studentId], references: [id])
-  course    Course   @relation(fields: [courseId], references: [id])
-}
-
-model Grade {
-  id        Int        @id @default(autoincrement())
-  grade     Float
-  type      GradeType
-  createdAt DateTime   @default(now())
-  userId    Int
-  courseId  Int
-
-  student   User       @relation(fields: [userId], references: [id])
-  course    Course     @relation(fields: [courseId], references: [id])
-}
-
-model Announcement {
-  id        Int      @id @default(autoincrement())
-  title     String
-  message   String
-  createdAt DateTime @default(now())
-  courseId  Int
-  authorId  Int
-
-  course    Course   @relation(fields: [courseId], references: [id])
-  author    User     @relation(fields: [authorId], references: [id])
-}
-
-model Department {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
-  courses  Course[]
 }
