@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { normalizeRole } from "@/lib/roles";
 
@@ -29,6 +30,25 @@ export async function POST(req: Request) {
     return NextResponse.json(safeUser);
   } catch (error) {
     console.error("REGISTER ERROR:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-  }
+    
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return NextResponse.json(
+          { error: "An account with this email already exists." },
+          { status: 409 }
+        );
+      }
+
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ error: "Unknown error" }, { status: 500 });  }
 }

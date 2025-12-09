@@ -1,9 +1,18 @@
-export type UserRole = "ADMIN" | "INSTRUCTOR" | "STUDENT";
+import { Role } from "@prisma/client";
 
-export function normalizeRole(role?: string | null): UserRole {
-  if (role === "ADMIN" || role === "INSTRUCTOR" || role === "STUDENT") {
-    return role;
+export type UserRole = Role;
+
+export function normalizeRole(role?: unknown): UserRole {
+  const normalized =
+    typeof role === "string" ? role.toString().trim().toUpperCase() : undefined;
+
+  if (
+    normalized === Role.ADMIN ||
+    normalized === Role.INSTRUCTOR ||
+    normalized === Role.STUDENT
+  ) {
+    return normalized;
   }
 
-  return "STUDENT";
+  return Role.STUDENT;
 }
