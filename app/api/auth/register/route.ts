@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { normalizeRole } from "@/lib/roles";
 
@@ -26,7 +26,8 @@ export async function POST(req: Request) {
     });
 
     const { password: _password, ...safeUser } = newUser;
-    return NextResponse.json(safeUser);  } catch (error) {
+    return NextResponse.json(safeUser);
+  } catch (error) {
     console.error("REGISTER ERROR:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
