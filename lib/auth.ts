@@ -13,8 +13,9 @@ if (!authSecret) {
 }
 
 export const authOptions: AuthOptions = {
- secret: authSecret ?? "development-nextauth-secret",
- providers: [
+  secret: authSecret ?? "development-nextauth-secret",
+
+  providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -23,36 +24,37 @@ export const authOptions: AuthOptions = {
       },
 
       async authorize(credentials) {
-        const email = credentials?.email?.trim().toLowerCase();
-        const password = credentials?.password;
+        try {
+          const email = credentials?.email?.trim().toLowerCase();
+          const password = credentials?.password;
 
-        if (!email || !password) {
-          return null;      
+          if (!email || !password) {
+            throw new Error("Invalid credentials");
           }
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user) {
+            throw new Error("Invalid credentials");
+          }
 
-        if (!user) {
-          console.log("User not found");
-          return null;
+          const isValidPassword = await bcrypt.compare(password, user.password);
+
+          if (!isValidPassword) {
+            throw new Error("Invalid credentials");
+          }
+
+          const role = normalizeRole(user.role);
+
+          return {
+            id: String(user.id),
+            email: user.email,
+            role,
+            name: user.name,
+          };
+        } catch (err) {
+          console.error("LOGIN ERROR:", err);
+          throw new Error("Invalid credentials");
         }
-
-        const valid = await bcrypt.compare(password, user.password);
-
-        if (!valid) {
-          console.log("Invalid password");
-          return null;
-        }
-
-        const role = normalizeRole(user.role?.toString());
-        return {
-          id: String(user.id),
-          name: user.name,
-          email: user.email,
-          role,
-        };
       },
     }),
   ],
@@ -63,7 +65,7 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = normalizeRole(user.role?.toString());
+        token.role = user.role;
       }
       return token;
     },
@@ -71,7 +73,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = normalizeRole(token.role?.toString());
+        session.user.role = normalizeRole(token.role as string);
       }
       return session;
     },
