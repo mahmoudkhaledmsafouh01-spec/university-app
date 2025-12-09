@@ -7,7 +7,9 @@ A Next.js and Prisma-powered university management portal for courses, lessons, 
    ```bash
    npm install
    ```
-2. Set `DATABASE_URL` in `.env` to point to your PostgreSQL instance.
+2. Set required environment variables in `.env`:
+   - `DATABASE_URL` for your PostgreSQL instance
+   - `NEXTAUTH_SECRET` for signing and reading authentication cookies (any long random string in development)
 3. Apply the schema (and seed sample data if desired):
    ```bash
    npx prisma db push

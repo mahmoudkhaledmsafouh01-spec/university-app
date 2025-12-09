@@ -4,10 +4,19 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { normalizeRole } from "./roles";
 
+const authSecret = process.env.NEXTAUTH_SECRET;
+
+if (!authSecret) {
+  console.warn(
+    "NEXTAUTH_SECRET is not set. Falling back to an insecure development secret; set NEXTAUTH_SECRET in your environment for proper cookie encryption."
+  );
+}
+
 const prisma = new PrismaClient();
 
 export const authOptions: AuthOptions = {
-  providers: [
+ secret: authSecret ?? "development-nextauth-secret",
+ providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {
