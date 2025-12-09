@@ -1,7 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { prisma } from "./prisma";
 import { normalizeRole } from "./roles";
 
 const authSecret = process.env.NEXTAUTH_SECRET;
@@ -11,8 +11,6 @@ if (!authSecret) {
     "NEXTAUTH_SECRET is not set. Falling back to an insecure development secret; set NEXTAUTH_SECRET in your environment for proper cookie encryption."
   );
 }
-
-const prisma = new PrismaClient();
 
 export const authOptions: AuthOptions = {
  secret: authSecret ?? "development-nextauth-secret",

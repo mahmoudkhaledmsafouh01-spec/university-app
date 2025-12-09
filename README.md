@@ -7,9 +7,9 @@ A Next.js and Prisma-powered university management portal for courses, lessons, 
    ```bash
    npm install
    ```
-2. Set required environment variables in `.env`:
-   - `DATABASE_URL` for your PostgreSQL instance
+2. Copy `.env.example` to `.env` (or `.env.local`) and adjust if needed. The default values point to the docker-compose Postgres service:   - `DATABASE_URL` for your PostgreSQL instance
    - `NEXTAUTH_SECRET` for signing and reading authentication cookies (any long random string in development)
+ 2. Copy `.env.example` to `.env` (or `.env.local`) and adjust if needed. The default values point to the docker-compose Postgres service:  
 3. Apply the schema (and seed sample data if desired):
    ```bash
    npx prisma db push
