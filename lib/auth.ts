@@ -26,11 +26,12 @@ export const authOptions: AuthOptions = {
         const email = credentials?.email?.trim().toLowerCase();
         const password = credentials?.password;
 
-        if (!email || !password) {          return null;
-        }
+        if (!email || !password) {
+          return null;      
+          }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
         if (!user) {
