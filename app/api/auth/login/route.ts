@@ -6,12 +6,17 @@ export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const normalizedEmail = email?.toString().trim().toLowerCase();
+    const normalizedPassword = password?.toString();
 
+    if (!normalizedEmail || !normalizedPassword)
+      return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
+
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (!user)
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(normalizedPassword, user.password);
 
     if (!valid)
       return NextResponse.json({ error: "Invalid password" }, { status: 400 });

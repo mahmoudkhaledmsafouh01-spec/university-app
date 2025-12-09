@@ -6,7 +6,10 @@ import { normalizeRole } from "@/lib/roles";
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const { name, email, password, role } = data;
+    const name = data.name?.toString().trim();
+    const email = data.email?.toString().trim().toLowerCase();
+    const password = data.password?.toString();
+    const role = data.role;
 
     if (!name || !email || !password)
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
