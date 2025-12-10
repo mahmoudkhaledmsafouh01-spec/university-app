@@ -4,6 +4,11 @@ import bcrypt from "bcrypt";
 import { prisma } from "./prisma";
 import { normalizeRole } from "./roles";
 
+const defaultNextAuthUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+const urlHost = new URL(defaultNextAuthUrl).hostname;
+const usingHttps = defaultNextAuthUrl.startsWith("https://");
+const cookieDomain = urlHost === "localhost" ? undefined : urlHost;
+
 const authSecret = process.env.NEXTAUTH_SECRET;
 
 if (!authSecret) {
@@ -12,9 +17,30 @@ if (!authSecret) {
   );
 }
 
+if (!process.env.NEXTAUTH_URL) {
+  console.warn(
+    `NEXTAUTH_URL is not set. Defaulting to ${defaultNextAuthUrl} so NextAuth can issue cookies correctly.`
+  );
+}
+
 export const authOptions: AuthOptions = {
   secret: authSecret ?? "development-nextauth-secret",
-
+  useSecureCookies: usingHttps,
+  cookies: {
+    sessionToken: {
+      name: usingHttps
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: usingHttps,
+        domain: cookieDomain,
+      },
+    },
+  },
+  
   providers: [
     CredentialsProvider({
       name: "credentials",

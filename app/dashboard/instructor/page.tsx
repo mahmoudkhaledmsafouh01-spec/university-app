@@ -9,10 +9,13 @@ interface Course {
   instructorId: number;
 }
 
-export default async function InstructorDashboard() {  const session = await getServerSession(authOptions);
+const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/courses`, {
-    cache: "no-store",
+export default async function InstructorDashboard() {
+  const session = await getServerSession(authOptions);
+  console.log("[Instructor dashboard session]", session);
+
+  const res = await fetch(`${baseUrl}/api/courses`, {    cache: "no-store",
   });
 
   const allCourses: Course[] = await res.json();
@@ -41,8 +44,8 @@ export default async function InstructorDashboard() {  const session = await get
     },
   ];
 
-    return (
- <div className="space-y-8">
+  return (
+    <div className="space-y-8">
       <header className="rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-700 p-6 text-white shadow-lg">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-2">
@@ -86,7 +89,7 @@ export default async function InstructorDashboard() {  const session = await get
               </div>
             </div>
           ))}
-           </div>
+        </div>
       </header>
 
       <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">

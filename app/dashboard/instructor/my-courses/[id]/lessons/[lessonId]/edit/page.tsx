@@ -3,13 +3,15 @@ interface EditLessonParams {
   lessonId: string;
 }
 
+const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
 export default async function EditLessonPage({
   params,
 }: {
   params: EditLessonParams;
 }) {
   const res = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/lessons/${params.lessonId}`,
+    `${baseUrl}/api/lessons/${params.lessonId}`,
     { cache: "no-store" }
   );
 
@@ -20,7 +22,7 @@ export default async function EditLessonPage({
     "use server";
 
     await fetch(
-      `${process.env.NEXTAUTH_URL}/api/lessons/${params.lessonId}`,
+      `${baseUrl}/api/lessons/${params.lessonId}`,
       {
         method: "PUT",
         body: JSON.stringify({

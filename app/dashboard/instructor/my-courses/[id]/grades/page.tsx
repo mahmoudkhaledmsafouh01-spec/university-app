@@ -26,10 +26,12 @@ interface Course {
   title: string;
   enrollments: Enrollment[];
 }
+ 
+const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 export default async function CourseGrades({ params }: CourseGradesPageProps) {
   const res = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/courses/${params.id}`,
+    `${baseUrl}/api/courses/${params.id}`,
     { cache: "no-store" }
   );
 
