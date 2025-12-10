@@ -55,18 +55,18 @@ export const authOptions: AuthOptions = {
           const password = credentials?.password;
 
           if (!email || !password) {
-            throw new Error("Invalid credentials");
+            return null;
           }
 
           const user = await prisma.user.findUnique({ where: { email } });
           if (!user) {
-            throw new Error("Invalid credentials");
+            return null;
           }
 
           const isValidPassword = await bcrypt.compare(password, user.password);
 
           if (!isValidPassword) {
-            throw new Error("Invalid credentials");
+            return null;
           }
 
           const role = normalizeRole(user.role);
@@ -79,7 +79,7 @@ export const authOptions: AuthOptions = {
           };
         } catch (err) {
           console.error("LOGIN ERROR:", err);
-          throw new Error("Invalid credentials");
+          throw new Error("Authentication failed");
         }
       },
     }),
