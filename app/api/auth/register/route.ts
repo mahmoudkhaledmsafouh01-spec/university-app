@@ -4,6 +4,9 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { normalizeRole } from "@/lib/roles";
 
+// Use the Node.js runtime so native bcrypt works in the route handler
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     const data = await req.json();
