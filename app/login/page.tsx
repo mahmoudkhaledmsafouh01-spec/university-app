@@ -22,20 +22,25 @@ export default function LoginPage() {
     setFormError(null);
     setSubmitting(true);
 
-    const result = await signIn("credentials", {
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-      email,
-      password,
-      redirect: false,
-    });
-    if (result?.error) {
-      setFormError("Invalid credentials");
+      if (result?.error) {
+        setFormError("Invalid credentials");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("LOGIN FAILED", err);
+      setFormError("Something went wrong. Please try again.");
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    router.push("/dashboard");
-  
   };
 
   return (
