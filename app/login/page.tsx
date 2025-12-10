@@ -1,27 +1,41 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
   const params = useSearchParams();
+  const router = useRouter();
   const error = params.get("error");
   const registered = params.get("registered");
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(
+    error ? "Invalid credentials" : null
+  );
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setFormError(null);
+    setSubmitting(true);
 
-    const form = e.currentTarget;
-    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement)
-      .value;
+    const result = await signIn("credentials", {
 
-    await signIn("credentials", {
       email,
       password,
-      callbackUrl: "/dashboard",
+      redirect: false,
     });
+    if (result?.error) {
+      setFormError("Invalid credentials");
+      setSubmitting(false);
+      return;
+    }
+
+    router.push("/dashboard");
+  
   };
 
   return (
@@ -39,11 +53,11 @@ export default function LoginPage() {
         </p>
       )}
 
-      {error && (
-        <p className="text-sm font-medium text-red-600">Invalid credentials</p>
+      {formError && (
+        <p className="text-sm font-medium text-red-600">{formError}</p>
       )}
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4" onSubmit={handleSubmit} autoComplete="off">
         <div className="space-y-1">
           <label className="text-sm font-medium text-slate-700" htmlFor="email">
             Email
@@ -54,6 +68,9 @@ export default function LoginPage() {
             type="email"
             placeholder="you@example.com"
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none"
           />
         </div>
@@ -68,15 +85,19 @@ export default function LoginPage() {
             type="password"
             placeholder="********"
             required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none"
           />
         </div>
 
         <button
           type="submit"
+          disabled={submitting}
           className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-slate-800 focus:outline-none"
         >
-          Login
+          {submitting ? "Signing in..." : "Login"}
         </button>
       </form>
 

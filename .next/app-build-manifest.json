@@ -21,15 +21,20 @@
       "static/chunks/main-app.js",
       "static/chunks/app/not-found.js"
     ],
+    "/login/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/login/layout.js"
+    ],
     "/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
     ],
-    "/login/layout": [
+    "/register/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/login/layout.js"
+      "static/chunks/app/register/page.js"
     ]
   }
 }
