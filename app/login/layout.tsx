@@ -9,8 +9,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <div className="min-h-screen bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center p-6">
+        <div className="w-full max-w-md rounded-xl bg-white/80 p-8 shadow-lg backdrop-blur">
+          {children}
+        </div>
+      </div>
+    </div>
   )
 }
